@@ -95,6 +95,9 @@ class TB4Hub(QObject):
         for n in range(1,8):
             tmpDf['t%d' % n] = 0
 
+        # 长度周期
+        cycle = self.mainWin.maxLimit + 2
+
         for i in range(2,len(tmpDf)):
             # print("i = ",i)
             for n in range(1,8):
@@ -126,34 +129,44 @@ class TB4Hub(QObject):
                         prevNum += 1
 
                     if prev is not None and prevNum >= 2:
+                        # print("条件成立，计算结果（矩阵投注法）,prevNum = ",prevNum)
+
+                        if prevNum > cycle:  # 存在大于周期的情况
+                            # print("存在大于周期的情况,prevNum=prevNum%d,cycle=%d" % (prevNum,cycle))
+
+                            # 求余数，计算新的周期是否满足投注条件？
+                            prevNum = prevNum % cycle
+                            if prevNum >= 2:
+                                pass
+                                # print("求余数，计算新的周期是否满足投注条件？满足")
+                            else:
+                                # print("求余数prevNum=%d，计算新的周期是否满足投注条件？不满足，跳过" % prevNum)
+                                break  # 跳过投注
+
+                        # 偏移开始投注位置
                         prevNum = prevNum - 2
-                        # print("条件成立，计算结果（过三关）,prevNum = ",prevNum)
-                        m = prevNum % 3 # 余数
-                        s = prevNum // 3 # 整除
-                        # print("余数m=%d，整除s=%d" % (m,s))
+                        # # 初始过3关
+                        race = self.mainWin.maxLimit - 2
+                        if prevNum >= 3:
+                            # print("3关过后，进行梯度投注")
+                            race = self.mainWin.maxLimit - prevNum
+                        # else:
+                        #     print("初始过3关")
 
-                        # 计算基数
-                        b = 1 if m == 0 else m * 2
+                        # print("race=%d" % race)
 
-                        # # print("计算基数：b = ",b)
-                        #
-                        # bet = b if s == 0 else (b ** (s+1))
-                        #
-                        # # print("投注额：bet = ",bet)
-                        bet = b  # s = 0
-                        if s == 1:
-                            bet = b * 2
-                        elif s > 1:
-                            if m == 0:
-                                bet = (b * 2) ** s
-                            elif m == 1:
-                                bet = b ** (s + 1)
-                            elif m == 2:
-                                bet = 2 ** (s + 2)
+                        # 计算倍数
+                        multipleNum = 2 ** prevNum
 
-                        # print("投注额：bet = ",bet)
+                        # 计算本轮总投注数
+                        bets = multipleNum * race
 
-                        tmpDf.loc[i, tk] = bet if current == prev else -bet
+                        if bets == 0:
+                            break  # 没有投注，跳过
+
+                        # print("race=%d,计算倍数=%d，计算本轮总投注数=%d" % (race,multipleNum,bets))
+
+                        tmpDf.loc[i, tk] = bets if current == prev else -bets
 
 
         # 计算胜负

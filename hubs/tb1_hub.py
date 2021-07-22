@@ -93,6 +93,10 @@ class TB1Hub(QObject):
         for n in range(1,8):
             tmpDf['t%d' % n] = 0
 
+        # 初始化默认预测投注结果
+        for n in range(1, 8):
+            tmpDf['f%d' % n] = 0
+
         # 长度周期
         cycle = self.mainWin.maxLimit + 2
 
@@ -103,11 +107,12 @@ class TB1Hub(QObject):
                 nk = 'n%d' % n
                 tk = 't%d' % n
                 dk = 'd%d' % n          # 记录当倍数
+                fk = 'f%d' % n          # 投注预测记录
 
                 current = tmpDf.loc[i,nk]
 
-                if current != 0:
-
+                # if current != 0:
+                if True:
                     # print('nk = ',nk,'\ttk = ',tk)
                     # print("current = ",current)
 
@@ -131,30 +136,31 @@ class TB1Hub(QObject):
                     # print("当前有节点")
 
                     if prev is not None and prevNum >= 2:
-                        print("条件成立，计算结果（矩阵投注法）,prevNum = ",prevNum)
+                        # print("条件成立，计算结果（矩阵投注法）,prevNum = ",prevNum)
 
                         if prevNum > cycle:     # 存在大于周期的情况
-                            print("存在大于周期的情况,prevNum=prevNum%d,cycle=%d" % (prevNum,cycle))
+                            # print("存在大于周期的情况,prevNum=prevNum%d,cycle=%d" % (prevNum,cycle))
 
                             # 求余数，计算新的周期是否满足投注条件？
                             prevNum = prevNum % cycle
                             if prevNum >= 2:
-                                print("求余数，计算新的周期是否满足投注条件？满足")
+                                pass
+                                # print("求余数，计算新的周期是否满足投注条件？满足")
                             else:
-                                print("求余数prevNum=%d，计算新的周期是否满足投注条件？不满足，跳过" % prevNum)
+                                # print("求余数prevNum=%d，计算新的周期是否满足投注条件？不满足，跳过" % prevNum)
                                 break # 跳过投注
 
                         # 偏移开始投注位置
                         prevNum = prevNum - 2
                         # # 初始过3关
                         race = self.mainWin.maxLimit - 2
-                        if prevNum < 3:
-                            print("初始过3关")
-                        else:
-                            print("3关过后，进行梯度投注")
+                        if prevNum >= 3:
+                            # print("3关过后，进行梯度投注")
                             race = self.mainWin.maxLimit - prevNum
+                        # else:
+                        #     print("初始过3关")
 
-                        print("race=%d" % race)
+                        # print("race=%d" % race)
 
                         # 计算倍数
                         multipleNum = 2 ** prevNum
@@ -165,9 +171,11 @@ class TB1Hub(QObject):
                         if bets == 0:
                             break   # 没有投注，跳过
 
-                        print("race=%d,计算倍数=%d，计算本轮总投注数=%d" % (race,multipleNum,bets))
+                        # print("race=%d,计算倍数=%d，计算本轮总投注数=%d" % (race,multipleNum,bets))
+                        if current != 0:
+                            tmpDf.loc[i, tk] = bets if current == prev else -bets
 
-                        tmpDf.loc[i, tk] = bets if current == prev else -bets
+                        tmpDf.loc[i, fk] = bets
             # print("分析终止")
             # break
 
@@ -272,14 +280,34 @@ class TB1Hub(QObject):
                 # 显示预测结果
                 for n in range(1, 8):
 
-                    val = row['t%d' % n]
+                    bets = row['t%d' % n]
+                    fBets = row['f%d' % n]
+                    val = row['n%d' % n]
 
-                    if val > 0:
+                    if bets > 0:
                         self.mainWin.tb1.item(n, index).setBackground(QBrush(yellow))
                         self.mainWin.tb1.item(n+12, index).setBackground(QBrush(yellow))
-                        self.mainWin.tb1.item(n, index).setText(str(val))
-                        self.mainWin.tb1.item(n+12, index).setText(str(val))
+                        self.mainWin.tb1.item(n, index).setText(str(bets))
+                        self.mainWin.tb1.item(n+12, index).setText(str(bets))
+                    elif fBets > 0:
+                        self.mainWin.tb1.item(n, index).setBackground(QBrush(yellow))
+                        self.mainWin.tb1.item(n + 12, index).setBackground(QBrush(yellow))
+                        self.mainWin.tb1.item(n, index).setText(str(fBets))
+                        self.mainWin.tb1.item(n + 12, index).setText(str(fBets))
                     else:
+                        if val == 0:
+                            print("当前状态为【和】，向前获取投注预测")
+                            self.mainWin.tb1.item(n, index).setText('??')
+                            self.mainWin.tb1.item(n + 12, index).setText('??')
+
+                            # 向上获取记录
+                            print("向上获取记录,index = ",index)
+                            for prev in range(index-1,0,-1):
+                                print(self.resultDf.iloc[prev])
+
+                            # exit(77777)
+                            break
+
                         self.mainWin.tb1.item(n, index).setBackground(QBrush(white))
                         self.mainWin.tb1.item(n+12, index).setBackground(QBrush(white))
                         self.mainWin.tb1.item(n, index).setText('')

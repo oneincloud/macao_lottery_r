@@ -3,8 +3,8 @@ import os
 import requests
 import time
 
-VERSION = '1.1'
-NAME = '澳六彩过三关'
+VERSION = '1.0'
+NAME = '澳六彩-矩阵投注'
 
 def basePath():
     '''

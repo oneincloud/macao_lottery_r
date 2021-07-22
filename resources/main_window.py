@@ -55,7 +55,7 @@ class MainWindow(QWidget,Ui_MainWindow):
         # self.tb3Hub = TB3Hub(mainWin=self)
         # self.tb4Hub = TB4Hub(mainWin=self)
         # self.tb5Hub = TB5Hub(mainWin=self)
-
+        #
         # self.tb7Hub = TB7Hub(mainWin=self)
 
         # 绑定数据更新
