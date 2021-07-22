@@ -61,8 +61,6 @@ class TB1Hub(QObject):
 
                 self.mainWin.tb1.setColumnHidden(col, True)
 
-
-
     def resetCells(self):
         '''
         重置单元格数据
@@ -85,8 +83,6 @@ class TB1Hub(QObject):
         '''
         tmpDf = pd.DataFrame(df.copy(True))
 
-        # print("分析数据：",tmpDf.shape)
-
         # 数据处理
         # 计算大小，-1小，0平，1大
         for n in range(1, 8):
@@ -97,6 +93,10 @@ class TB1Hub(QObject):
         for n in range(1,8):
             tmpDf['t%d' % n] = 0
 
+        # 长度周期
+        cycle = self.mainWin.maxLimit + 2
+
+        # 开始分析数据
         for i in range(2,len(tmpDf)):       # 行
             # print("i = ",i)
             for n in range(1,8):        # 列
@@ -116,7 +116,7 @@ class TB1Hub(QObject):
 
                     # 开启识别模式
                     for j in range(i - 1, -1, -1):
-                        if tmpDf.loc[j,nk] == 0:
+                        if tmpDf.loc[j,nk] == 0:        # 和跳过
                             continue
 
                         if prev is None:
@@ -128,41 +128,46 @@ class TB1Hub(QObject):
 
                         prevNum += 1
 
+                    # print("当前有节点")
+
                     if prev is not None and prevNum >= 2:
+                        print("条件成立，计算结果（矩阵投注法）,prevNum = ",prevNum)
+
+                        if prevNum > cycle:     # 存在大于周期的情况
+                            print("存在大于周期的情况,prevNum=prevNum%d,cycle=%d" % (prevNum,cycle))
+
+                            # 求余数，计算新的周期是否满足投注条件？
+                            prevNum = prevNum % cycle
+                            if prevNum >= 2:
+                                print("求余数，计算新的周期是否满足投注条件？满足")
+                            else:
+                                print("求余数prevNum=%d，计算新的周期是否满足投注条件？不满足，跳过" % prevNum)
+                                break # 跳过投注
+
+                        # 偏移开始投注位置
                         prevNum = prevNum - 2
-                        # print("条件成立，计算结果（过三关）,prevNum = ",prevNum)
-                        m = prevNum % 3 # 余数
-                        s = prevNum // 3 # 整除
-                        # print("余数m=%d，整除s=%d" % (m,s))
+                        # # 初始过3关
+                        race = self.mainWin.maxLimit - 2
+                        if prevNum < 3:
+                            print("初始过3关")
+                        else:
+                            print("3关过后，进行梯度投注")
+                            race = self.mainWin.maxLimit - prevNum
 
+                        print("race=%d" % race)
 
-                        # 计算基数
-                        b = 1 if m == 0 else m*2
+                        # 计算倍数
+                        multipleNum = 2 ** prevNum
 
-                        # # print("计算基数：b = ",b)
-                        #
-                        # bet = b if s == 0 else (b ** (s+1))
-                        #
-                        # # print("投注额：bet = ",bet)
-                        bet = b     # s = 0
-                        if s == 1:
-                            bet = b * 2
-                        elif s > 1:
-                            if m == 0:
-                                bet = (b * 2) ** s
-                            elif m == 1:
-                                bet = b ** (s + 1)
-                            elif m == 2:
-                                bet = 2 ** (s + 2)
+                        # 计算本轮总投注数
+                        bets = multipleNum * race
 
-                        # if s >= 2:
-                        #     print("#" * 20)
-                        #     print("余数m=%d，整除s=%d" % (m, s))
-                        #     print("计算基数：b = ", b)
-                        #     print("投注额：bet = ", bet)
+                        if bets == 0:
+                            break   # 没有投注，跳过
 
-                        tmpDf.loc[i, tk] = bet if current == prev else -bet
+                        print("race=%d,计算倍数=%d，计算本轮总投注数=%d" % (race,multipleNum,bets))
 
+                        tmpDf.loc[i, tk] = bets if current == prev else -bets
             # print("分析终止")
             # break
 
