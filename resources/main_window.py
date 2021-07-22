@@ -49,36 +49,36 @@ class MainWindow(QWidget,Ui_MainWindow):
         self.cbYear.setCurrentText(str(self.currentYear))
 
         # 初始化表格界面
-        # self.tb0Hub = TB0Hub(mainWin=self)
+        self.tb0Hub = TB0Hub(mainWin=self)
         self.tb1Hub = TB1Hub(mainWin=self)
-        # self.tb2Hub = TB2Hub(mainWin=self)
-        # self.tb3Hub = TB3Hub(mainWin=self)
-        # self.tb4Hub = TB4Hub(mainWin=self)
-        # self.tb5Hub = TB5Hub(mainWin=self)
-        #
-        # self.tb7Hub = TB7Hub(mainWin=self)
+        self.tb2Hub = TB2Hub(mainWin=self)
+        self.tb3Hub = TB3Hub(mainWin=self)
+        self.tb4Hub = TB4Hub(mainWin=self)
+        self.tb5Hub = TB5Hub(mainWin=self)
+
+        self.tb7Hub = TB7Hub(mainWin=self)
 
         # 绑定数据更新
-        # self.dataUpdate.connect(self.tb0Hub.update)
+        self.dataUpdate.connect(self.tb0Hub.update)
         self.dataUpdate.connect(self.tb1Hub.update)
-        # self.dataUpdate.connect(self.tb2Hub.update)
-        # self.dataUpdate.connect(self.tb3Hub.update)
-        # self.dataUpdate.connect(self.tb4Hub.update)
-        # self.dataUpdate.connect(self.tb5Hub.update)
+        self.dataUpdate.connect(self.tb2Hub.update)
+        self.dataUpdate.connect(self.tb3Hub.update)
+        self.dataUpdate.connect(self.tb4Hub.update)
+        self.dataUpdate.connect(self.tb5Hub.update)
 
         # 绑定计算统计汇总
-        # self.tb1Hub.push.connect(self.tb0Hub.updateSub)
-        # self.tb2Hub.push.connect(self.tb0Hub.updateSub)
-        # self.tb3Hub.push.connect(self.tb0Hub.updateSub)
-        # self.tb4Hub.push.connect(self.tb0Hub.updateSub)
-        # self.tb5Hub.push.connect(self.tb0Hub.updateSub)
+        self.tb1Hub.push.connect(self.tb0Hub.updateSub)
+        self.tb2Hub.push.connect(self.tb0Hub.updateSub)
+        self.tb3Hub.push.connect(self.tb0Hub.updateSub)
+        self.tb4Hub.push.connect(self.tb0Hub.updateSub)
+        self.tb5Hub.push.connect(self.tb0Hub.updateSub)
 
         # 绑定分布统计分析
-        # self.tb1Hub.push.connect(self.tb7Hub.updateSub)
-        # self.tb2Hub.push.connect(self.tb7Hub.updateSub)
-        # self.tb3Hub.push.connect(self.tb7Hub.updateSub)
-        # self.tb4Hub.push.connect(self.tb7Hub.updateSub)
-        # self.tb5Hub.push.connect(self.tb7Hub.updateSub)
+        self.tb1Hub.push.connect(self.tb7Hub.updateSub)
+        self.tb2Hub.push.connect(self.tb7Hub.updateSub)
+        self.tb3Hub.push.connect(self.tb7Hub.updateSub)
+        self.tb4Hub.push.connect(self.tb7Hub.updateSub)
+        self.tb5Hub.push.connect(self.tb7Hub.updateSub)
 
         self.spiderThread = SpiderThread()
         self.spiderThread.failed.connect(lambda :QMessageBox.critical(self,'出错了','网站获取数据失败，请稍后再试！'))

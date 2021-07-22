@@ -95,6 +95,10 @@ class TB5Hub(QObject):
         for n in range(1,8):
             tmpDf['t%d' % n] = 0
 
+        # 初始化默认预测投注结果
+        for n in range(1, 8):
+            tmpDf['f%d' % n] = 0
+
         # 长度周期
         cycle = self.mainWin.maxLimit + 2
 
@@ -103,10 +107,12 @@ class TB5Hub(QObject):
             for n in range(1,8):
                 nk = 'n%d' % n
                 tk = 't%d' % n
+                fk = 'f%d' % n  # 投注预测记录
 
                 current = tmpDf.loc[i,nk]
 
-                if current != 0:
+                # if current != 0:
+                if True:
 
                     # print('nk = ',nk,'\ttk = ',tk)
                     # print("current = ",current)
@@ -166,7 +172,10 @@ class TB5Hub(QObject):
 
                         # print("race=%d,计算倍数=%d，计算本轮总投注数=%d" % (race,multipleNum,bets))
 
-                        tmpDf.loc[i, tk] = bets if current == prev else -bets
+                        if current != 0:
+                            tmpDf.loc[i, tk] = bets if current == prev else -bets
+
+                        tmpDf.loc[i, fk] = bets
 
 
 
@@ -280,13 +289,20 @@ class TB5Hub(QObject):
                 # 显示预测结果
                 for n in range(1, 8):
 
-                    val = row['t%d' % n]
+                    bets = row['t%d' % n]
+                    fBets = row['f%d' % n]
+                    val = row['n%d' % n]
 
-                    if val > 0:
+                    if bets > 0:
                         self.mainWin.tb5.item(n, index).setBackground(QBrush(yellow))
                         self.mainWin.tb5.item(n + 12, index).setBackground(QBrush(yellow))
-                        self.mainWin.tb5.item(n, index).setText(str(val))
-                        self.mainWin.tb5.item(n + 12, index).setText(str(val))
+                        self.mainWin.tb5.item(n, index).setText(str(bets))
+                        self.mainWin.tb5.item(n + 12, index).setText(str(bets))
+                    elif fBets > 0:
+                        self.mainWin.tb5.item(n, index).setBackground(QBrush(yellow))
+                        self.mainWin.tb5.item(n + 12, index).setBackground(QBrush(yellow))
+                        self.mainWin.tb5.item(n, index).setText(str(fBets))
+                        self.mainWin.tb5.item(n + 12, index).setText(str(fBets))
                     else:
                         self.mainWin.tb5.item(n, index).setBackground(QBrush(white))
                         self.mainWin.tb5.item(n + 12, index).setBackground(QBrush(white))

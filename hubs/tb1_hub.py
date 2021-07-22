@@ -295,19 +295,6 @@ class TB1Hub(QObject):
                         self.mainWin.tb1.item(n, index).setText(str(fBets))
                         self.mainWin.tb1.item(n + 12, index).setText(str(fBets))
                     else:
-                        if val == 0:
-                            print("当前状态为【和】，向前获取投注预测")
-                            self.mainWin.tb1.item(n, index).setText('??')
-                            self.mainWin.tb1.item(n + 12, index).setText('??')
-
-                            # 向上获取记录
-                            print("向上获取记录,index = ",index)
-                            for prev in range(index-1,0,-1):
-                                print(self.resultDf.iloc[prev])
-
-                            # exit(77777)
-                            break
-
                         self.mainWin.tb1.item(n, index).setBackground(QBrush(white))
                         self.mainWin.tb1.item(n+12, index).setBackground(QBrush(white))
                         self.mainWin.tb1.item(n, index).setText('')
