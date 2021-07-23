@@ -147,6 +147,8 @@ class TB0Hub():
         self.mainWin.tb0.item(len(df), key).setText(str(df['result'].sum()))
 
 
+
+
     def set_shortcut(self):
         '''
         set ctrl-c/ctrl-v，etc

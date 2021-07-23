@@ -81,6 +81,75 @@
        </widget>
       </item>
       <item>
+       <widget class="QLabel" name="label_2">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>13</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>连续限制：</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="editLimit">
+        <property name="minimumSize">
+         <size>
+          <width>36</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>36</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>13</pointsize>
+         </font>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnRecal">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>36</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>13</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>重新计算</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -545,12 +614,28 @@
    <slot>openManagerData()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>570</x>
-     <y>22</y>
+     <x>708</x>
+     <y>31</y>
     </hint>
     <hint type="destinationlabel">
      <x>534</x>
      <y>-14</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnRecal</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>doReCal()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>382</x>
+     <y>23</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>396</x>
+     <y>-9</y>
     </hint>
    </hints>
   </connection>
@@ -559,5 +644,6 @@
   <slot>doSync()</slot>
   <slot>openManagerData()</slot>
   <slot>doAddItem()</slot>
+  <slot>doReCal()</slot>
  </slots>
 </ui>

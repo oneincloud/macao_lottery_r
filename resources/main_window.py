@@ -1,4 +1,4 @@
-from PyQt5.Qt import QWidget,QMessageBox,pyqtSignal,QThread,QMouseEvent,QPoint,QAction,QIcon,QLineEdit,QUrl
+from PyQt5.Qt import QWidget,QMessageBox,pyqtSignal,QThread,QMouseEvent,QPoint,QAction,QIcon,QLineEdit,QUrl,QTimer
 from PyQt5.QtCore import Qt
 from resources.ui.MainWindow_UI import Ui_MainWindow
 from resources.manager_data_dialog import ManagerDataDialog
@@ -48,6 +48,8 @@ class MainWindow(QWidget,Ui_MainWindow):
         self.cbYear.addItems(self.listYears)
         self.cbYear.setCurrentText(str(self.currentYear))
 
+        self.editLimit.setText(str(self.maxLimit))
+
         # 初始化表格界面
         self.tb0Hub = TB0Hub(mainWin=self)
         self.tb1Hub = TB1Hub(mainWin=self)
@@ -79,6 +81,9 @@ class MainWindow(QWidget,Ui_MainWindow):
         self.tb3Hub.push.connect(self.tb7Hub.updateSub)
         self.tb4Hub.push.connect(self.tb7Hub.updateSub)
         self.tb5Hub.push.connect(self.tb7Hub.updateSub)
+
+        self.tb1Hub.push.connect(lambda x:self.doReCalFinished())
+
 
         self.spiderThread = SpiderThread()
         self.spiderThread.failed.connect(lambda :QMessageBox.critical(self,'出错了','网站获取数据失败，请稍后再试！'))
@@ -161,6 +166,32 @@ class MainWindow(QWidget,Ui_MainWindow):
             self.spiderThread.date = None
         self.spiderThread.start()
 
+    def doReCal(self):
+        print("执行重新计算")
+
+        newLimit = self.editLimit.text()
+
+        try:
+            newLimit = int(newLimit)
+
+            self.maxLimit = newLimit
+
+            self.btnRecal.setEnabled(False)
+            self.btnRecal.setText('计算中...')
+
+            print("重新计算数据")
+            # self.filterUpdateDatas()
+            QTimer.singleShot(500,self.filterUpdateDatas)
+
+
+        except Exception as e:
+            QMessageBox.critical(self, '填写错误', '请填写正确的正整数')
+
+    def doReCalFinished(self):
+        self.btnRecal.setEnabled(True)
+        self.btnRecal.setText('重新计算')
+
+
 
     def openManagerData(self):
         '''
@@ -181,6 +212,8 @@ class MainWindow(QWidget,Ui_MainWindow):
         print('打开数据管理窗口')
 
 
+
+
     def spiderLoading(self):
         '''
         爬虫爬取中
@@ -188,6 +221,8 @@ class MainWindow(QWidget,Ui_MainWindow):
         '''
         self.btnSync.setEnabled(False)
         self.btnSync.setText('同步中...')
+
+
 
     def spiderComplete(self):
         '''
