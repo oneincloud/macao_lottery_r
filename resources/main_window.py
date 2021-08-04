@@ -27,7 +27,7 @@ class MainWindow(QWidget,Ui_MainWindow):
         super(MainWindow,self).__init__(parent)
         self.setupUi(self)
 
-        self.maxLimit = 3   # 连关最大长度
+        self.maxLimit = 6   # 连关最大长度
 
         self.__initUI()
 
