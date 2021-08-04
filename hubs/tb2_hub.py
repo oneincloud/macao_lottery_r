@@ -268,8 +268,8 @@ class TB2Hub(QObject):
 
             # 是否最后一条记录？
             if index + 1 >= len(self.resultDf):
-                print("这是最后一条记录，显示预测结果")
-                print(row)
+                # print("这是最后一条记录，显示预测结果")
+                # print(row)
 
                 self.mainWin.tb2.item(0, index).setBackground(QBrush(yellow))
 
