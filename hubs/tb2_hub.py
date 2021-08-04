@@ -101,8 +101,13 @@ class TB2Hub(QObject):
 
         # 长度周期
         cycle = self.mainWin.maxLimit + 2
+        # print("maxLimit = %d" % self.mainWin.maxLimit)
+        # print("长度周期 cycle = %d" % cycle)
 
         for i in range(2,len(tmpDf)):
+
+            row = tmpDf.loc[i]
+
             # print("i = ",i)
             for n in range(1,8):
                 nk = 'n%d' % n
@@ -110,6 +115,8 @@ class TB2Hub(QObject):
                 fk = 'f%d' % n  # 投注预测记录
 
                 current = tmpDf.loc[i,nk]
+
+                # print("issue = %d，n = %d" % (row['issue'],n))
 
                 # if current != 0:
                 if True:
@@ -144,7 +151,7 @@ class TB2Hub(QObject):
                                 # print("求余数，计算新的周期是否满足投注条件？满足")
                             else:
                                 # print("求余数prevNum=%d，计算新的周期是否满足投注条件？不满足，跳过" % prevNum)
-                                break  # 跳过投注
+                                continue  # 跳过投注
 
                         # 偏移开始投注位置
                         prevNum = prevNum - 2
@@ -181,6 +188,7 @@ class TB2Hub(QObject):
 
         # 只提取分析结果
         # resultDf = tmpDf[['date','issue','win','lose'] + ['t%d'%t for t in range(1,8)]]
+
 
         # 推送计算结果
         self.push.emit(2, tmpDf)
@@ -261,6 +269,7 @@ class TB2Hub(QObject):
             # 是否最后一条记录？
             if index + 1 >= len(self.resultDf):
                 print("这是最后一条记录，显示预测结果")
+                print(row)
 
                 self.mainWin.tb2.item(0, index).setBackground(QBrush(yellow))
 

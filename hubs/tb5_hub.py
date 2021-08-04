@@ -147,7 +147,7 @@ class TB5Hub(QObject):
                                 # print("求余数，计算新的周期是否满足投注条件？满足")
                             else:
                                 # print("求余数prevNum=%d，计算新的周期是否满足投注条件？不满足，跳过" % prevNum)
-                                break  # 跳过投注
+                                continue  # 跳过投注
 
                         # 偏移开始投注位置
                         prevNum = prevNum - 2
